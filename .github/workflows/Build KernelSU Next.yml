@@ -314,18 +314,16 @@ jobs:
           cd kernel_workspace
           if [ "${{ github.event.inputs.SUSFS }}" == "true" ]; then
             git clone --depth=1 https://gitlab.com/simonpunk/susfs4ksu.git -b gki-android15-6.6 &
-            git clone --depth=1 https://github.com/WildKernels/kernel_patches.git wild_susfs_fix &
           fi
           git clone --depth=1 https://github.com/mrcxlinux/kernel_patches.git &
           git clone --depth=1 https://github.com/ShirkNeko/SukiSU_patch.git &
-          git clone --depth=1 https://github.com/WildKernels/kernel_patches.git wildkernels_patches &
+          git clone --depth=1 https://github.com/palazik/kernel_patches.git wildkernels_patches &
           wait
 
           if [ "${{ github.event.inputs.SUSFS }}" == "true" ]; then
             cp susfs4ksu/kernel_patches/50_add_susfs_in_gki-android15-6.6.patch ./common/
             cp susfs4ksu/kernel_patches/fs/* ./common/fs/
             cp susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-            cp susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ./common/KernelSU-Next/
           fi
 
           cd ./common
@@ -333,15 +331,7 @@ jobs:
           git apply -p1 < EnablePOLLY.patch || true
 
           if [ "${{ github.event.inputs.SUSFS }}" == "true" ]; then
-            FIX_DIR="../wild_susfs_fix/next/susfs_fix_patches/v2.2.0"
-            ( cd KernelSU-Next && patch -p1 --forward < 10_enable_susfs_for_ksu.patch || true )
-
-            for p in fix_Kbuild.patch fix_init.c.patch fix_kernel_umount.c.patch fix_setuid_hook.c.patch fix_sucompat.c.patch fix_supercall.c.patch ksu_toolkit.patch overwrite_hook_mode.patch; do
-              if [ -f "$FIX_DIR/$p" ]; then
-                ( cd KernelSU-Next && patch -p1 --forward < "../$FIX_DIR/$p" ) || true
-              fi
-            done
-            patch -p1 < 50_add_susfs_in_gki-android15-6.6.patch
+            patch -p1 --forward < 50_add_susfs_in_gki-android15-6.6.patch || true
           fi
 
       - name: ⚙️ Configure Kernel Options
@@ -1001,7 +991,7 @@ jobs:
           REPO_URL="https://github.com/${{ github.repository }}"
           CAPTION="❌ <b>Kernel Build Failed!</b>
 
-          📱 <b>Device:</b> <code>Motorola Edge 70 (Roadstr)</code>
+          📱 <b>Device:</b> <code>Motorola Edge 70 (roadstr)</code>
           ⚡ <b>KSU:</b> <code>KernelSU Next</code>
           📅 <b>Date:</b> $DATE
           📝 <b>Commit:</b> <code>$COMMIT_MSG</code>
@@ -1055,7 +1045,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cat << 'EOF' > release_notes.md
-          ### 📱 Motorola Edge 70 (roadstr) KernelSU Next Kernel
+          ### 📱 Motorola Edge 70 (roadstr) KernelSU Next [SM-7750]
 
           - **Kernel Version:** ${{ env.FULL_VERSION }}
           - **Build Time:** ${{ env.TIME_FORM }}
