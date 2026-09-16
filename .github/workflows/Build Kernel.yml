@@ -1,15 +1,15 @@
-name: OP13 Kernel Build
-run-name: ${{ inputs.ksu_type }} OP13 Build
+name: roadstr Kernel Build
+run-name: ${{ inputs.ksu_type }} roadstr Build
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.ksu_type }}
   cancel-in-progress: true
 
 env:
-  TZ: Asia/Shanghai
+  TZ: Asia/Kolkata
   ANDROID_VERSION: 'android15'
   KERNEL_VERSION: '6.6'
-  KERNEL_NAME: 'android15-8-g29d86c5fc9dd-abogki428889875-4k'
+  KERNEL_NAME: 'android15-8-sky-4k'
   KERNEL_FULL_VERSION: '6.6.143'
 
 on:
@@ -198,10 +198,10 @@ jobs:
             libelf-dev dos2unix pahole cmake &
 
           echo "Cloning source repository..."
-          curl -L https://github.com/palazik/android_kernel_common_oneplus_sm8750/archive/refs/heads/${{ env.KERNEL_FULL_VERSION }}_oneplus13_coloros16.zip \
-            -o common.zip &&
-          unzip -q common.zip &&
-          mv android_kernel_common_oneplus_sm8750-* common &&
+          curl -L https://github.com/aum47/kernel_motorola_sm7750/archive/refs/heads/main.zip \
+            -o common.zip && \
+          unzip -q common.zip && \
+          mv kernel_motorola_sm7750-* common && \
           rm -f common.zip &
 
           if [ "${{ steps.clang-cache.outputs.cache-hit }}" != "true" ]; then
@@ -1117,11 +1117,11 @@ jobs:
               return {"tag": "li", "children": [f"{icon} {name}"]}
 
           content = [
-              {"tag": "h3", "children": ["OnePlus 13 (PJZ110) — palaziks kernel"]},
+              {"tag": "h3", "children": ["Moto Edge 70 (roadstr) — aum47's kernel"]},
               {"tag": "hr"},
               {"tag": "h4", "children": ["📋 Build Info"]},
               {"tag": "ul", "children": [
-                  {"tag": "li", "children": [{"tag": "strong", "children": ["Device: "]}, "OnePlus 13 PJZ110 (CN) / SM8750"]},
+                  {"tag": "li", "children": [{"tag": "strong", "children": ["Device: "]}, "Moto Edge 70 (roadstr) / SM7750"]},
                   {"tag": "li", "children": [{"tag": "strong", "children": ["Kernel: "]}, f"{e('TG_KERNEL_VERSION')}-android15"]},
                   {"tag": "li", "children": [{"tag": "strong", "children": ["Manager: "]}, f"{e('TG_KSU_DISPLAY')} v{e('TG_KSUVER')}"]},
                   {"tag": "li", "children": [{"tag": "strong", "children": ["Suffix: "]}, f"-{e('TG_SUFFIX')}"]},
@@ -1158,7 +1158,7 @@ jobs:
               ]},
               {"tag": "hr"},
               {"tag": "h4", "children": ["🎯 ROM Compatibility"]},
-              {"tag": "p", "children": ["⚠️ Built with ZyCromerZ Clang for ColorOS / OxygenOS ONLY. To flash on an AOSP-based ROM, run the OP13 Kernel AOSP Build workflow yourself — AOSP Clang builds are for AOSP ROMs only."]},
+              # {"tag": "p", "children": ["⚠️ Built with ZyCromerZ Clang for heloui?."]},
               {"tag": "hr"},
               {"tag": "h4", "children": ["📥 Installation"]},
               {"tag": "ol", "children": [
@@ -1177,7 +1177,7 @@ jobs:
 
           data = {
               "access_token": os.environ.get("TELEGRAPH_TOKEN", ""),
-              "title": f"palaziks kernel — OP13 {e('TG_KERNEL_VERSION')}-{e('TG_SUFFIX')} #{e('TG_BUILD_NUM')}",
+              "title": f"palaziks kernel — roadstr {e('TG_KERNEL_VERSION')}-{e('TG_SUFFIX')} #{e('TG_BUILD_NUM')}",
               "author_name": "palaziks",
               "author_url": f"https://github.com/{e('TG_REPO')}",
               "content": json.dumps(content),
@@ -1207,7 +1207,7 @@ jobs:
 
           CAPTION="✅ <b>Kernel Build Successful!</b>
 
-          📱 <b>Device:</b> <code>OnePlus 13</code>
+          📱 <b>Device:</b> <code>Motorola Edge 70</code>
           ⚡ <b>KSU:</b> <code>${{ inputs.ksu_type }}</code>
           📅 <b>Date:</b> $DATE
           📝 <b>Commit:</b> <code>$COMMIT_MSG</code>
@@ -1232,7 +1232,7 @@ jobs:
           REPO_URL="https://github.com/${{ github.repository }}"
           CAPTION="❌ <b>Kernel Build Failed!</b>
 
-          📱 <b>Device:</b> <code>OnePlus 13</code>
+          📱 <b>Device:</b> <code>Motorola Edge 70</code>
           ⚡ <b>KSU:</b> <code>${{ inputs.ksu_type }}</code>
           📅 <b>Date:</b> $DATE
           📝 <b>Commit:</b> <code>$COMMIT_MSG</code>
@@ -1269,13 +1269,13 @@ jobs:
 
       - name: Set Environment Variables
         run: |
-          FULL_VERSION=${{ env.KERNEL_FULL_VERSION }}-palaziks-ShiftPorts
+          FULL_VERSION=${{ env.KERNEL_FULL_VERSION }}-aum47-skykernel
           echo "FULL_VERSION=$FULL_VERSION" >> $GITHUB_ENV
-          TIME="$(TZ='Asia/Shanghai' date +'%y%m%d%H%M%S')"
-          TIME_FORM="$(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M:%S')"
+          TIME="$(TZ='Asia/Kolkata' date +'%y%m%d%H%M%S')"
+          TIME_FORM="$(TZ='Asia/Kolkata' date +'%Y-%m-%d %H:%M:%S')"
           echo "TIME=$TIME" >> $GITHUB_ENV
           echo "TIME_FORM=$TIME_FORM" >> $GITHUB_ENV
-          TAG_HEAD="OPPO-OPlus-Realme-build"
+          TAG_HEAD="moto-roadstrbuild"
           echo "TAG_HEAD=$TAG_HEAD" >> $GITHUB_ENV
           echo "KSU_TYPENAME=${{ inputs.ksu_type }}" >> $GITHUB_ENV
 
@@ -1286,8 +1286,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cat << 'EOF' > release_notes.md
-          ### 📱 OnePlus 13 ${{ inputs.ksu_type }} SM8750 Generic Kernel
-          > ⚠️ **ROM Compatibility:** Built with **ZyCromerZ Clang** for **ColorOS / OxygenOS** only. To flash on an **AOSP**-based ROM, run the `OP13 Kernel AOSP Build` workflow yourself (AOSP Clang builds are for AOSP ROMs only).
+          ### 📱 Moto Edge 70 ${{ inputs.ksu_type }} SM8750 Generic Kernel
+          > ⚠️ **ROM Compatibility:** Built with **ZyCromerZ Clang** for helloui?.
 
           - **Kernel Version:** ${{ env.FULL_VERSION }}
           - **Build Time:** ${{ env.TIME_FORM }}
