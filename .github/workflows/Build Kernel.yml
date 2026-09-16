@@ -9,7 +9,7 @@ env:
   TZ: Asia/Kolkata
   ANDROID_VERSION: 'android15'
   KERNEL_VERSION: '6.6'
-  KERNEL_NAME: 'android15-8-sky-4k'
+  KERNEL_NAME: 'android15-8-SkyKernel-4k'
   KERNEL_FULL_VERSION: '6.6.143'
 
 on:
@@ -348,9 +348,9 @@ jobs:
           sed -i 's/-DKSU_VERSION_FULL=[^ ]*//g' "$KBUILD_FILE"
           sed -i '/KSU_VERSION_FULL/d' "$KBUILD_FILE"
           cat >> "$KBUILD_FILE" <<EOF
-          ccflags-y += -DKSU_VERSION_FULL=\"v${KSU_API_VERSION}-${KSU_COMMIT_HASH}@palaziks\"
+          ccflags-y += -DKSU_VERSION_FULL=\"v${KSU_API_VERSION}-${KSU_COMMIT_HASH}@aum47\"
           EOF
-          echo "✅ SukiSU $KSUVER (v${KSU_API_VERSION}-${KSU_COMMIT_HASH}@palaziks)"
+          echo "✅ SukiSU $KSUVER (v${KSU_API_VERSION}-${KSU_COMMIT_HASH}@aum47)"
 
       - name: ⚡ Setup KernelSU
         if: inputs.ksu_type == 'KernelSU'
@@ -475,7 +475,7 @@ jobs:
           echo "CONFIG_KSU=y" >> "$DEFCONFIG"
           case "${{ inputs.ksu_type }}" in
             "ReSukiSU")
-              echo 'CONFIG_KSU_FULL_NAME_FORMAT="v%KSU_VERSION%-%COMMIT_SHA%@palaziks"' >> "$DEFCONFIG"
+              echo 'CONFIG_KSU_FULL_NAME_FORMAT="v%KSU_VERSION%-%COMMIT_SHA%@aum47"' >> "$DEFCONFIG"
               ;;
             "SukiSU Ultra")
               echo "CONFIG_KSU_MANUAL_HOOK=y" >> "$DEFCONFIG"
@@ -913,7 +913,7 @@ jobs:
       - name: 📦 Add build name
         run: |
           cd kernel_workspace
-          sudo sed -i "s/-4k/-palaziks-ShiftPorts/g" ./common/arch/arm64/configs/gki_defconfig
+          sudo sed -i "s/-4k/-aum47-SkyKernel/g" ./common/arch/arm64/configs/gki_defconfig
           sed -i 's/${scm_version}//' ./common/scripts/setlocalversion
           echo "CONFIG_LOCALVERSION_AUTO=n" >> ./common/arch/arm64/configs/gki_defconfig
 
@@ -1003,8 +1003,8 @@ jobs:
           if [[ "${{ github.event.inputs.lz4kd_enable }}" == "true" ]]; then
             wget https://raw.githubusercontent.com/$GITHUB_REPOSITORY/refs/heads/$GITHUB_REF_NAME/zram.zip || true
           fi
-          AK3_NAME=AnyKernel3_${KSU_TYPENAME}_${{ env.KSUVER }}_${{ env.KERNEL_FULL_VERSION }}_palaziks-ShiftPorts.zip
-          FULL_VERSION=${{ env.KERNEL_FULL_VERSION }}-palaziks-ShiftPorts
+          AK3_NAME=AnyKernel3_${KSU_TYPENAME}_${{ env.KSUVER }}_${{ env.KERNEL_FULL_VERSION }}_aum47-SkyKernel.zip
+          FULL_VERSION=${{ env.KERNEL_FULL_VERSION }}-aum47-SkyKernel
           zip -r ../$AK3_NAME ./*
           echo "ak3name=$AK3_NAME" >> $GITHUB_OUTPUT
 
@@ -1076,7 +1076,7 @@ jobs:
           export TG_KERNEL_VERSION="${{ env.KERNEL_FULL_VERSION }}"
           export TG_KSU_DISPLAY="${{ inputs.ksu_type }}"
           export TG_KSUVER="${{ env.KSUVER }}"
-          export TG_SUFFIX="palaziks-ShiftPorts"
+          export TG_SUFFIX="aum47-SkyKernel"
           export TG_LTO="${{ github.event.inputs.lto_type }}"
           export TG_BUILD_NUM="${{ github.run_number }}"
           export TG_TIME_NOW="$TIME_NOW"
@@ -1172,13 +1172,13 @@ jobs:
                   "  |  ",
                   {"tag": "a", "attrs": {"href": f"https://github.com/{e('TG_REPO')}"}, "children": [f"📦 {e('TG_REPO')}"]},
               ]},
-              {"tag": "p", "children": ["Built by @palaziks"]},
+              {"tag": "p", "children": ["Built by @aum47"]},
           ]
 
           data = {
               "access_token": os.environ.get("TELEGRAPH_TOKEN", ""),
-              "title": f"palaziks kernel — roadstr {e('TG_KERNEL_VERSION')}-{e('TG_SUFFIX')} #{e('TG_BUILD_NUM')}",
-              "author_name": "palaziks",
+              "title": f"aum47's kernel — roadstr {e('TG_KERNEL_VERSION')}-{e('TG_SUFFIX')} #{e('TG_BUILD_NUM')}",
+              "author_name": "aum47",
               "author_url": f"https://github.com/{e('TG_REPO')}",
               "content": json.dumps(content),
               "return_content": "false"
@@ -1269,13 +1269,13 @@ jobs:
 
       - name: Set Environment Variables
         run: |
-          FULL_VERSION=${{ env.KERNEL_FULL_VERSION }}-aum47-skykernel
+          FULL_VERSION=${{ env.KERNEL_FULL_VERSION }}-aum47-SkyKernel
           echo "FULL_VERSION=$FULL_VERSION" >> $GITHUB_ENV
           TIME="$(TZ='Asia/Kolkata' date +'%y%m%d%H%M%S')"
           TIME_FORM="$(TZ='Asia/Kolkata' date +'%Y-%m-%d %H:%M:%S')"
           echo "TIME=$TIME" >> $GITHUB_ENV
           echo "TIME_FORM=$TIME_FORM" >> $GITHUB_ENV
-          TAG_HEAD="moto-roadstrbuild"
+          TAG_HEAD="moto-roadstr"
           echo "TAG_HEAD=$TAG_HEAD" >> $GITHUB_ENV
           echo "KSU_TYPENAME=${{ inputs.ksu_type }}" >> $GITHUB_ENV
 
@@ -1286,8 +1286,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cat << 'EOF' > release_notes.md
-          ### 📱 Moto Edge 70 ${{ inputs.ksu_type }} SM8750 Generic Kernel
-          > ⚠️ **ROM Compatibility:** Built with **ZyCromerZ Clang** for helloui?.
+          ### 📱 Moto Edge 70 ${{ inputs.ksu_type }} SM7750 Generic Kernel
+          > ⚠️ **ROM Compatibility:** Built with **ZyCromerZ Clang** for helloui.
 
           - **Kernel Version:** ${{ env.FULL_VERSION }}
           - **Build Time:** ${{ env.TIME_FORM }}
