@@ -175,5 +175,5 @@ yes
 
 
 <p align="center">
-  <sub>Built with ❤️ by palaziks • Kernel version: <code>6.6.143-palaziks-ShiftPorts</code></sub>
+  <sub>Built by aum47 with help of palaziks • Kernel version: <code>6.6.143-aum47-SkyKenrel</code></sub>
 </p>
