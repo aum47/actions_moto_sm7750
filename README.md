@@ -1,9 +1,9 @@
 <div id="toc" align="center" style="margin-bottom: 0; padding-bottom: 0;">
   <ul style="list-style: none; margin: 0; padding: 0;">
     <summary>
-      <h1 align="center" style="margin: 0; padding: 0;">⋆ palaziks OnePlus Kernel ⋆</h1>
+      <h1 align="center" style="margin: 0; padding: 0;">⋆ aum47's stock roadstr kernels ⋆</h1>
       <p align="center" style="font-size: 9px; color: #777; margin-top: 5px; margin-bottom: 2px;">
-        <small>Stability-focused OGKI (aka OKI) 6.6 kernel for OnePlus 13 (SM8750)</small>
+        <small>Stability-focused GKI + qcom stock kernel by moto 6.6 kernel for Moto Edge 70 (SM7750)</small>
       </p>
       <p align="center" style="font-size:12px; margin-top: 0; margin-bottom: 20px;">
         <i>ReSukiSU &amp; KernelSU Next &amp; KernelSU &amp; SukiSU Ultra</i>
@@ -25,32 +25,17 @@
 
 | Property | Value |
 |----------|-------|
-| **Kernel Version** | `6.6.143` (upstreamed from OGKI 6.6.89) |
-| **Chipset** | `SM8750` \| Snapdragon 8 Elite \| sun |
-| **Android Version** | `15 VanillaIceCream` (compatible with later versions) |
-| **ROM Compatibility** | OxygenOS / ColorOS **or** AOSP — one build per ROM type ([see below](#-rom-compatibility)) |
+| **Kernel Version** | `6.6.143` (upstreamed from Qcom-GKI 6.6.89) |
+| **Chipset** | `SM7750` \| Snapdragon 7 Gen 4 \| sun |
+| **Android Version** | `16-17?` (compatible with later versions) |
+| **ROM Compatibility** |stock helloui. idk about los|
 | **Root Solution** | ReSukiSU / KSU Next / KSU / SukiSU Ultra |
 | **Build System** | GitHub Actions CI/CD (optimized for ~5-6min builds) |
 
 ---
 
 ## 🎯 ROM Compatibility
-
-> [!IMPORTANT]
-> A single build **cannot** cover both ColorOS/OxygenOS and AOSP — the toolchain decides the target ROM. Pick the workflow that matches the ROM you run, then choose your root manager with the **KSU type** option.
-
-| Your ROM | Workflow to run | Toolchain |
-|----------|-----------------|-----------|
-| **ColorOS / OxygenOS** | **OP13 Kernel Build** (`Build Kernel.yml`) | ZyCromerZ Clang |
-| **AOSP-based** (LineageOS, crDroid, etc.) | **OP13 Kernel AOSP Build** (`Build Kernel AOSP.yml`) | AOSP Clang |
-
-- **ZyCromerZ Clang builds → ColorOS / OxygenOS only.**
-- **AOSP Clang builds → AOSP ROMs only.**
-- Flashing the wrong variant on your ROM will not boot.
-
-> [!NOTE]
-> **GitHub Releases only ship the ColorOS / OxygenOS (normal) builds.** If you're on an AOSP ROM, there is no prebuilt release — fork the repo and run **OP13 Kernel AOSP Build** yourself under **Actions**, then grab the ZIP from the artifacts (or your Telegram bot).
-
+yes
 ---
 
 ## 📝 Features
@@ -64,7 +49,7 @@
 - ✅ **Unicode Bypass Fix** – Path traversal protection *(always on)*
 
 ### 🚀 Performance & Scheduler
-- ✅ **Fengchi / HMBIRD** – Advanced CPU scheduler optimizations for SM8750 *(turning it off also removes HMBIRD symbols that some OnePlus vendor modules may use)*
+- TO BE REMOVED **Fengchi / HMBIRD** – Advanced CPU scheduler optimizations for SM8750 *(turning it off also removes HMBIRD symbols that some OnePlus vendor modules may use)*
 - ✅ **BORE Scheduler** – Burst-Oriented Response Enhancer (EEVDF) for snappier interactivity *(optional, off by default)*
 - ✅ **ADIOS IO Scheduler** – Improved read/write performance
 - ✅ **Oryon CPU Tuning** – `-mcpu=oryon-1` flags for SM8750
@@ -145,61 +130,12 @@
 -ffile-prefix-map=...       # Reproducible builds
 ```
 
----
-
-## 🛠️ Build Workflow (GitHub Actions)
-
-### Quick Start
-1. **Fork** this repository (ensure all branches are copied)
-2. Go to **Actions** → Enable workflows
-3. Pick the workflow for your **ROM** ([why two workflows?](#-rom-compatibility)):
-   - ColorOS / OxygenOS → **OP13 Kernel Build**
-   - AOSP-based ROMs → **OP13 Kernel AOSP Build**
-4. Hit **"Run workflow"** and configure options:
-   - 🔘 **KSU type**: `ReSukiSU` (default) / `SukiSU Ultra` / `KernelSU` / `KernelSU Next`
-   - ✅ SuSFS (recommended for hiding)
-   - ✅ Fengchi (performance scheduler)
-   - ✅ Memory Opt Patches (24 optimizations)
-   - 🔘 LTO Type: `thin` (balanced) / `none` (fastest compile) / `full` (max optimization)
-   - 🔘 Optional features: LZ4KD, NTSync, IPv6 NAT, etc.
-5. Click **"Run workflow"** → Wait ~5-6 minutes
-   - The run shows up as *"<KSU type> OP13 Build"* (or *"<KSU type> OP13 AOSP Build"*)
-6. Download `AnyKernel3_*.zip` from artifacts or Telegram (if you configured TG bot)
-
-### Workflow Optimizations
-This CI pipeline includes:
-- 🚀 **Parallel patch application** for 20+ WildKernels patches
-- 💾 **RAM-based LTO cache** (`$GITHUB_WORKSPACE`) to avoid disk I/O bottlenecks
-- ⚡ **ThinLTO job limiting** (`--thinlto-jobs=$(nproc/2)`) to prevent CPU thrashing
-- 🔄 **Aggressive ccache** with kernel-specific sloppiness for maximal cache hits
-- 📦 **Pre-downloaded toolchain** via aria2c with 16 connections
-- 🗑️ **Background cleanup** of unused GitHub runner packages
-
-### Build Time Expectations with CCache
-| Configuration | Estimated Time |
-|--------------|----------------|
-| `lto_type: none` + minimal patches | ~3:20-3:50 |
-| `lto_type: thin` + all patches (default) | ~4:50-5:50 |
-| `lto_type: full` + all patches | ~7:00-9:00 |
-
-> 💡 **Tip**: Use `lto_type: none` for rapid testing, `thin` for release builds.
-
-### Updating the Kernel Version
-Change `KERNEL_FULL_VERSION` in both `Build Kernel.yml` and `Build Kernel AOSP.yml` (and the version shown in this README). The kernel source branch, ccache keys, ZIP names, Telegram messages and releases all follow it.
-
----
 
 ## 📱 Supported Devices
 
 | Device | Codename | Status |
 |--------|----------|--------|
-| **OnePlus 13** | `PJZ110` (CN) / `OP13` (Global) | ✅ Fully Supported |
-| **OnePlus 13T** | `PKX110` | ✅ Fully Supported |
-| **OnePlus 13s** | `CPH2723` | ✅ Fully Supported |
-| **OnePlus Ace 6** | `PLQ110` | ✅ Fully Supported |
-| **OnePlus Ace 5 Pro** | `PKR110` | ✅ Fully Supported |
-| **OnePlus Pad 3** | `OPD2415` | ✅ Fully Supported |
-| **OnePlus Pad 2 Pro** | `OPD2413` | ✅ Fully Supported |
+| **Moto Edge 70** |roadstr|yes| 
 
 > Requires unlocked bootloader + custom recovery (TWRP / KernelFlasher)
 
@@ -208,9 +144,7 @@ Change `KERNEL_FULL_VERSION` in both `Build Kernel.yml` and `Build Kernel AOSP.y
 ## 📦 Installation
 
 1. Download the latest `AnyKernel3_*.zip`:
-   - **ColorOS / OxygenOS** → [Releases](../../releases) or Actions artifacts
-   - **AOSP** → Actions artifacts of your own **OP13 Kernel AOSP Build** run (Releases are COS/OOS only — see [ROM Compatibility](#-rom-compatibility))
-2. Boot to custom recovery (TWRP / OrangeFox / KernelFlasher)
+2. Boot to custom recovery IF EXISTS (TWRP / OrangeFox / KernelFlasher)
 3. Flash the AnyKernel3 ZIP
 4. **(Required)** Install a metamodule for KSU:
    - [mountify](https://github.com/SukiSU-Ultra/mountify)
@@ -238,20 +172,7 @@ Change `KERNEL_FULL_VERSION` in both `Build Kernel.yml` and `Build Kernel AOSP.y
 | [brokestar233](https://github.com/brokestar233) | BORE scheduler integration for OnePlus SM8750 (source patch) |
 | [firelzrd](https://github.com/firelzrd) | BORE (Burst-Oriented Response Enhancer) CPU scheduler |
 
----
 
-## 🌟 Support the Project
-
-<p align="center">
-  If this kernel improves your daily driver, please consider:
-</p>
-
-<p align="center">
-  ⭐ <b>Starring this repository</b> – helps others discover it!<br>
-  🐛 <b>Reporting issues</b> – helps me fix bugs faster<br>
-  💡 <b>Suggesting features</b> – I read every issue!<br>
-  🔁 <b>Sharing your builds</b> – tag me in your Telegram/Discord posts
-</p>
 
 <p align="center">
   <sub>Built with ❤️ by palaziks • Kernel version: <code>6.6.143-palaziks-ShiftPorts</code></sub>
